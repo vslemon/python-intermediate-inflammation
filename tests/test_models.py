@@ -6,75 +6,38 @@ import numpy.testing as npt
 
 from inflammation.models import daily_mean, daily_max, daily_min
 
-def test_daily_mean_zeros():
-    """Test that mean function works for an array of zeros."""
-    
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0], [0, 0], [0, 0] ], [0, 0]),
+        ([ [1, 2], [3, 4], [5, 6] ], [3, 4]),
+    ])
+def test_daily_mean(test, expected):
+    """Test mean function works for array of zeroes and positive integers."""
+    npt.assert_array_equal(daily_mean(np.array(test)), np.array(expected))
 
-    test_input = np.array([[0, 0],
-                           [0, 0],
-                           [0, 0]])
-    test_result = np.array([0, 0])
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0, 0], [0, 0, 0], [0, 0, 0] ], [0, 0, 0]),
+        ([ [4, 2, 5], [1, 6, 2], [4, 1, 9] ], [4, 6, 9]),
+        ([ [4, -2, 5], [1, -6, 2], [-4, -1, 9] ], [4, -1, 9]),
+    ])
+def test_daily_max(test, expected):
+    """Test max function works for zeroes, positive integers, mix of positive/negative integers."""
+    npt.assert_array_equal(daily_max(np.array(test)), np.array(expected))
 
-    # Need to use Numpy testing functions to compare arrays
-    npt.assert_array_equal(daily_mean(test_input), test_result)
 
-
-def test_daily_mean_integers():
-    """Test that mean function works for an array of positive integers."""
-
-    test_input = np.array([[1, 2],
-                           [3, 4],
-                           [5, 6]])
-    test_result = np.array([3, 4])
-
-    # Need to use Numpy testing functions to compare arrays
-    npt.assert_array_equal(daily_mean(test_input), test_result)
-
-def test_daily_max_positives():
-    """Test that max function works for an array of positive integers."""
-
-    test_input = np.array([[2, 8, 1, 13],
-                           [5, 9, 4, 12],
-                           [6, 11, 7, 10],
-                           [14, 1, 3, 18]])
-    test_result = np.array([14, 11, 7, 18])
-
-    npt.assert_array_equal(daily_max(test_input), test_result)
-
-def test_daily_max_mixed():
-    """Test that max function works for an array of positive integers."""
-
-    test_input = np.array([[ 1, -2, 3, 4],
-                          [ 5, -6, 7, 8],
-                          [ 9, -10, 11, 12],
-                          [-13, 14, 15, 16]])
-    test_result = np.array([9, 14, 15, 16])
-
-    npt.assert_array_equal(daily_max(test_input), test_result)
-
-def test_daiy_min_positives():
-
-    """Test that min function works for an array of positive integers."""
-
-    test_input = np.array([[2, 8, 1, 13],
-                           [5, 9, 4, 12],
-                           [6, 11, 7, 10],
-                           [14, 1, 3, 18]])
-    test_result = np.array([2, 1, 1, 10])
-
-    npt.assert_array_equal(daily_min(test_input), test_result)
-
-def test_daiy_min_mixed():
-
-    """Test that min function works for an array of positive integers."""
-
-    test_input = np.array([[ 1, -2, 3, 4],
-                           [ 5, -6, 7, 8],
-                           [ 9, -10, 11, 12],
-                           [-13, 14, 15, 16]])
-    test_result = np.array([-13, -10, 3, 4])
-
-    npt.assert_array_equal(daily_min(test_input), test_result)
+@pytest.mark.parametrize(
+    "test, expected",
+    [
+        ([ [0, 0, 0], [0, 0, 0], [0, 0, 0] ], [0, 0, 0]),
+        ([ [4, 2, 5], [1, 6, 2], [4, 1, 9] ], [1, 1, 2]),
+        ([ [4, -2, 5], [1, -6, 2], [-4, -1, 9] ], [-4, -6, 2]),
+    ])
+def test_daily_min(test, expected):
+    """Test min function works for zeroes, positive integers, mix of positive/negative integers."""
+    npt.assert_array_equal(daily_min(np.array(test)), np.array(expected))
 
 def test_daily_min_string():
     """Test for TypeError when passing strings"""
