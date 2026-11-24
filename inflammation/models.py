@@ -32,3 +32,34 @@ def daily_min(data):
     """Calculate the daily min of a 2d inflammation data array."""
     return np.min(data, axis=0)
 
+
+class JSONDataSource:
+  """
+  Loads patient data with inflammation values from JSON files within a specified folder.
+  """
+  def __init__(self, dir_path):
+    self.dir_path = dir_path
+
+  def load_inflammation_data(self):
+    data_file_paths = glob.glob(os.path.join(self.dir_path, 'inflammation*.json'))
+    if len(data_file_paths) == 0:
+      raise ValueError(f"No inflammation JSON files found in path {self.dir_path}")
+    data = map(models.load_json, data_file_paths)
+    return list(data)
+
+
+def compute_standard_deviation_by_day(data):
+    means_by_day = map(daily_mean, data)
+    means_by_day_matrix = np.stack(list(means_by_day))
+
+    daily_standard_deviation = np.std(means_by_day_matrix, axis=0)
+
+    return daily_standard_deviation
+
+
+def analyse_data(data_source):
+    """Calculate the standard deviation by day between datasets."""
+    data = data_source.load_inflammation_data()
+    daily_standard_deviation = compute_standard_deviation_by_day(data)
+
+    return daily_standard_deviation
